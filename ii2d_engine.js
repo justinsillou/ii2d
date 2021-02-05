@@ -18,6 +18,7 @@ class Engine {
   /// data initializations
   constructor() {
     this.particleManager = new ParticleManager();
+		this.obstacleManager = new ObstacleManager();
     this.time=0;
     this.deltaTime=0.1;
   }
@@ -26,6 +27,7 @@ class Engine {
   draw() {
     ctx.clearRect(0,0,500,500);
 		this.particleManager.draw();
+		this.obstacleManager.draw();
 		/* Question 6
 		this.c = new Vector();
 		this.c.setRandInt(new Vector(100,100),new Vector(250,250));

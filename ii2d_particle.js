@@ -23,6 +23,19 @@ class GeneratorBox {
     p.lifeLeft=randInt(this.minTimeLeft, this.maxTimeLeft);
     p.initLife=p.lifeLeft;
   }
+
+  distance(m){
+    return Math.sqrt(Math.pow((this.min.x-m.x),2)+Math.pow((this.min.y-m.y),2));
+  }
+
+  move(m){
+    /*
+    this.min.setXY(m.x, m.y);
+    this.max.setXY(m.x + 5, m.y + 5);
+    */
+    this.min.add(m);
+    this.max.setXY(this.min.x + 5, this.min.y + 5);
+  }
 };
 
 
@@ -60,6 +73,7 @@ class ParticleManager {
     this.nbAliveMax=5000;
     //this.generator = new GeneratorBox();
     this.generatorList = [];
+    this.selected = null;
 
     /// reserve nbAliveMax particules (no new Particule required after constructor)
     for(let i=0;i<this.nbAliveMax;++i) {
@@ -86,7 +100,7 @@ class ParticleManager {
 
     for(let i=0;i<this.nbAliveMax;++i) {
       if (this.all[i].isAlive){
-        
+
         //Changement du alpha de la particule:
         this.all[i].color.a = this.all[i].lifeLeft/this.all[i].initLife;
 
@@ -118,6 +132,19 @@ class ParticleManager {
     for(let i=0;i<this.nbAliveMax;++i) {
       if (this.all[i].isAlive){
         this.all[i].draw();
+      }
+    }
+  }
+
+  ///select generator near mouse
+  select(m) {
+    let minDist = 50;
+    this.selected = null;
+    for(let i=0; i < this.generatorList.length;i++){
+      //console.log('dist gen ' + i + ' : ' + this.generatorList[i].distance(m));
+      if(this.generatorList[i].distance(m) <= minDist){
+        minDist = this.generatorList[i].distance(m);
+        this.selected = this.generatorList[i];
       }
     }
   }
