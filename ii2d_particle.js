@@ -22,6 +22,7 @@ class GeneratorBox {
     p.position.setRandInt(this.min, this.max);
     p.lifeLeft=randInt(this.minTimeLeft, this.maxTimeLeft);
     p.initLife=p.lifeLeft;
+    p.velocity.setRandInt(new Vector(-50,-50), new Vector(50,50));
   }
 
   distance(m){
@@ -50,6 +51,10 @@ class Particle {
     this.position=new Vector(0,0);
     this.color={r:0,g:0,b:0,a:1};
     this.isAlive = false;
+    this.velocity = new Vector(100,200); //pixels /sec en x et en y
+    this.force = new Vector(0,0); // ajout de la force
+    this.oldPosition = new Vector(0,0);
+    this.oldVelocity = new Vector(0,0);
   }
 
   draw() {
@@ -57,6 +62,13 @@ class Particle {
     ctx.fillRect(this.position.x, this.position.y, 5,5);
   }
 
+  motion(dt){
+    this.oldPosition.set(this.position);
+    this.oldVelocity.set(this.velocity);
+
+    this.velocity.set(this.velocity.clone().add(this.force.clone().mul(dt)));
+    this.position.set(this.position.clone().add(this.velocity.clone().mul(dt)));
+  }
 };
 
 /**
@@ -70,7 +82,7 @@ class Particle {
 class ParticleManager {
   constructor() {
     this.all=[]
-    this.nbAliveMax=5000;
+    this.nbAliveMax=20000;
     //this.generator = new GeneratorBox();
     this.generatorList = [];
     this.selected = null;
@@ -138,7 +150,7 @@ class ParticleManager {
 
   ///select generator near mouse
   select(m) {
-    let minDist = 50;
+    let minDist = 20;
     this.selected = null;
     for(let i=0; i < this.generatorList.length;i++){
       //console.log('dist gen ' + i + ' : ' + this.generatorList[i].distance(m));

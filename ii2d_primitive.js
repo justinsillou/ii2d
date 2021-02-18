@@ -23,6 +23,24 @@ class Vector {
     return this;
   }
 
+  mul(u){
+    this.x *= u;
+    this.y *= u;
+    return this;
+  }
+
+  div(u){
+    this.x /= u;
+    this.y /= u;
+    return this;
+  }
+
+  sous(u){
+    this.x -= u.x;
+    this.y -= u.y;
+    return this; 
+  }
+
   /// @return a copy of this
   /// example : let p=a.clone()
   clone() {
