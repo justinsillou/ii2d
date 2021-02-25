@@ -3,6 +3,7 @@ class Circle {
     this.center = center;
     this.radius = radius;
     this.color = "#FF0000";
+    this.oldCenter = new Vector(0,0);
   }
 
   draw(){
@@ -20,6 +21,35 @@ class Circle {
   distance(m){
     return Math.abs(Math.sqrt(Math.pow((this.center.x-m.x),2)+Math.pow((this.center.y-m.y),2)) - this.radius);
   }
+
+  is_inside(p){
+    let dist = Math.sqrt(Math.pow((this.center.x-p.x),2)+Math.pow((this.center.y-p.y),2));
+    return (dist <= this.radius);
+  }
+
+  intersect(p1,p2){
+    // p1 => x_old
+    // p2 => x_new
+
+    let normal = new Vector(0,0);
+    let position = new Vector(0,0);
+    let p1In = this.is_inside(p1);
+    let p2In = this.is_inside(p2);
+    let isIntersect = ((p1In && !p2In) || (!p1In && p2In));
+
+    //si intersection :
+    if (isIntersect){
+      position.set(p1);
+      normal.set(p1.sous(this.center));
+      normal.div(Math.sqrt(Math.pow(normal.x,2) + Math.pow(normal.y,2)));
+    }
+
+    return {
+      isIntersect: isIntersect,
+      normale: normal,
+      position: position
+    }
+  }
 }
 
 class Segment {
@@ -28,6 +58,8 @@ class Segment {
     this.b = b;
     this.color = "#FF0000";
     this.zone = null; // 0 = a, 1 = b, 2 = line
+    this.olda = new Vector(0,0);
+    this.oldb = new Vector(0,0);
   }
 
   draw(){
@@ -68,6 +100,29 @@ class Segment {
       return Math.abs((nAB.x*vAM.x+nAB.y*vAM.y))/Math.sqrt(Math.pow((nAB.x),2)+Math.pow((nAB.y),2));
     }
   }
+
+  signe(p,a,n){
+    let signe = p.clone().sous(a).x*n.x+p.clone().sous(a).y*n.y;
+    return (signe > 0)?true:false;
+  }
+
+  intersect(p1,p2){
+    let nAB = new Vector(- (this.b.y - this.a.y), this.b.x - this.a.x);
+    let np = new Vector(- (p2.y - p1.y), p2.x - p1.x);
+    let position = new Vector(0,0);
+
+    //calcul des signes => intersection ou non ?
+    let intersect = ((this.signe(p1, this.a, nAB)) != (this.signe(p2, this.a, nAB))
+    && (this.signe(this.a, p1, np)) != (this.signe(this.b, p1, np)))?true:false;
+
+    (intersect)?position.set(p1):true;
+
+    return {
+      isIntersect: intersect,
+      normale: nAB,
+      position: position
+    }
+  }
 }
 
 class ObstacleManager {
@@ -90,6 +145,17 @@ class ObstacleManager {
       if(this.all[i].distance(m) <= minDist){
         minDist = this.all[i].distance(m);
         this.selected = this.all[i];
+      }
+    }
+  }
+
+  update(){
+    for(let i=0; i < this.all.length; ++i){
+      if(this.all[i].constructor.name == 'Circle'){
+        this.all[i].oldCenter.set(this.all[i].center);
+      } else {
+        this.all[i].olda.set(this.all[i].a);
+        this.all[i].oldb.set(this.all[i].b);
       }
     }
   }
