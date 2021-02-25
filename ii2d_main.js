@@ -98,6 +98,31 @@ function scene_tp3_12() {
     engine.start();
 }
 
+function scene_tp2(){
+
+  canvas=document.getElementById("canvas");
+  ctx=canvas.getContext("2d");
+
+  engine=new Engine();
+  var gen1 = new GeneratorBox();
+  gen1.birthRate = 20;
+  gen1.min.setXY(100,100);
+  gen1.max.setXY(120,120);
+
+  var gen2 = new GeneratorBox();
+  gen2.birthRate = 10;
+  gen2.min.setXY(220,240);
+  gen2.max.setXY(225,260);
+
+  let circle1 = new Circle(new Vector(100, 100), 50);
+  let circle2 = new Circle(new Vector(250, 200), 10);
+
+  engine.obstacleManager.all.push(circle1, circle2); //ajout des cercles
+
+  engine.particleManager.generatorList.push(gen1,gen2);
+  engine.start();
+}
+
 function handleMouseDown(){
   // get the mouse relative to canvas
   mouseIsDown = true;
