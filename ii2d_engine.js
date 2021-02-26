@@ -21,24 +21,24 @@ class Engine {
 		this.obstacleManager = new ObstacleManager();
     this.time=0;
     this.deltaTime=0.01;
-		this.epsilon = 1; //coefficient de restitution
+		this.epsilon = 0.5; //coefficient de restitution
 		this.repulseur = false;
   }
 
-	motion(){
+	motion(){ //nouveau calcul de position
 		for(let i=0; i < this.particleManager.nbAliveMax; ++i){
 			this.particleManager.all[i].motion(this.deltaTime);
 		}
 	}
 
-	force(){
+	force(){ // nouveau calcul de force
 		for(let i=0; i < this.particleManager.nbAliveMax; ++i){
 			let gravity = new Vector(0,9.81);
 			this.particleManager.all[i].force.set(gravity.mul(100));
 		}
 	}
 
-	impulse(p, ncol, pcol){
+	impulse(p, ncol, pcol){ // calcul de l'impulsion
 		let ncol2 = ncol.clone();
 
 		//ncol unaire
@@ -60,10 +60,12 @@ class Engine {
 	}
 
 	solveCollision(p,o){
-		let res = o.intersect(p.oldPosition, p.position);
+		let oldPosCorrec = o.oldCorrec(p);
+		let res = o.intersect(oldPosCorrec, p.position);
+		//let res = o.intersect(p.oldPosition, p.position);
 		if (res.isIntersect){
 			this.impulse(p, res.normale, res.position);
-			//p.position.set(res.position);
+			//p.position.set(res.posit.clone()ion);
 		}
 	}
 

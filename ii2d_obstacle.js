@@ -50,6 +50,17 @@ class Circle {
       position: position
     }
   }
+
+  update(){
+    this.oldCenter.set(this.center);
+  }
+
+  oldCorrec(p){
+    let d = this.center.clone().sous(this.oldCenter);
+    return d.add(p.oldPosition);
+
+
+  }
 }
 
 class Segment {
@@ -123,6 +134,18 @@ class Segment {
       position: position
     }
   }
+
+  update(){
+    this.olda.set(this.a);
+    this.oldb.set(this.b);
+  }
+
+  oldCorrec(p){
+    let oldMid = new Vector((this.olda.x + this.oldb.x)/2, (this.olda.y + this.oldb.y)/2);
+    let newMid = new Vector((this.a.x + this.b.x)/2, (this.a.y + this.b.y)/2);
+    let d = new Vector(newMid.x - oldMid.x, newMid.y - oldMid.y);
+    return d.add(p.oldPosition);
+  }
 }
 
 class ObstacleManager {
@@ -151,12 +174,7 @@ class ObstacleManager {
 
   update(){
     for(let i=0; i < this.all.length; ++i){
-      if(this.all[i].constructor.name == 'Circle'){
-        this.all[i].oldCenter.set(this.all[i].center);
-      } else {
-        this.all[i].olda.set(this.all[i].a);
-        this.all[i].oldb.set(this.all[i].b);
-      }
+      this.all[i].update();
     }
   }
 }
