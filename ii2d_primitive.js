@@ -34,7 +34,7 @@ class Vector {
     this.y /= u;
     return this;
   }
-
+  
   sous(u){
     this.x -= u.x;
     this.y -= u.y;

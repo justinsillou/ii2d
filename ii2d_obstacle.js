@@ -58,8 +58,6 @@ class Circle {
   oldCorrec(p){
     let d = this.center.clone().sous(this.oldCenter);
     return d.add(p.oldPosition);
-
-
   }
 }
 

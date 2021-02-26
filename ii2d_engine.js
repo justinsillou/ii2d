@@ -21,7 +21,7 @@ class Engine {
 		this.obstacleManager = new ObstacleManager();
     this.time=0;
     this.deltaTime=0.01;
-		this.epsilon = 0.5; //coefficient de restitution
+		this.epsilon = 0.6; //coefficient de restitution
 		this.repulseur = false;
   }
 
@@ -38,15 +38,21 @@ class Engine {
 		}
 	}
 
-	impulse(p, ncol, pcol){ // calcul de l'impulsion
+	impulse(p, ncol, pcol, o){ // calcul de l'impulsion
 		let ncol2 = ncol.clone();
-
 		//ncol unaire
 		ncol.div(Math.sqrt(Math.pow(ncol.x,2) + Math.pow(ncol.y,2)));
 		//vitesse
 		let v_new = p.velocity.clone();
 		let vn_new = ncol.mul(v_new.dot(ncol));
 		let v_col = v_new.sous(vn_new.mul(1 + this.epsilon));
+		let v_rel = new Vector(0,0);
+		if (o.constructor.name == 'Circle'){
+			v_rel = (o.center.clone().sous(o.oldCenter.clone())).div(this.deltaTime);
+		} else {
+			v_rel = (o.a.clone().sous(o.olda.clone())).div(this.deltaTime);
+		}
+		v_col.add(v_rel);
 		p.velocity.set(v_col);
 
 		//raz ncol pour la position
@@ -64,7 +70,7 @@ class Engine {
 		let res = o.intersect(oldPosCorrec, p.position);
 		//let res = o.intersect(p.oldPosition, p.position);
 		if (res.isIntersect){
-			this.impulse(p, res.normale, res.position);
+			this.impulse(p, res.normale, res.position, o);
 			//p.position.set(res.posit.clone()ion);
 		}
 	}
